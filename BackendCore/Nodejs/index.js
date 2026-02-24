@@ -11,6 +11,8 @@ import fs from "fs"; // module ES6
 
 fs.writeFileSync("demo.txt", "Hello Node.js"); // Write file (when file not exist then create first then write)
 
+// fs.appendFileSync("demo.txt", "Welcome to Node.js \n");
+
 const data = fs.readFileSync("demo.txt", "utf8");
 console.log(data);
 
