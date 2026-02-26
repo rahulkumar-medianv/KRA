@@ -1,13 +1,14 @@
-import { IsNumber } from "class-validator";
+import { IsNumber, Min } from "class-validator";
 
-export class Cart {
-    @IsNumber()
-    id: number;
-
+export class AddCartDTO {
     @IsNumber()
     productId: number;
 
     @IsNumber()
     userId: number;
+
+    @IsNumber()
+    @Min(1)
+    quantity: number;
 
 }

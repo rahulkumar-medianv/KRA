@@ -1,4 +1,6 @@
-import { Entity, ForeignKey, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/users/user.entity";
+import { Product } from "src/product/entities/product.entity";
 
 @Entity('cart')
 export class Cart{
@@ -6,8 +8,23 @@ export class Cart{
     id: number;
 
     // relation with User
-   
+    @ManyToOne(()=> User, (user) => user.id, {
+        onDelete: 'CASCADE',
+    })
 
+    @JoinColumn({name: 'userId'})
+    user: User;
+
+    // relation with Product
+    @ManyToOne(() => Product, {
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn({name: 'productId'})
+    product: Product;
+
+    // quantity of product
+    @Column({default: 1})
+    quantity: number;
 
 }
 

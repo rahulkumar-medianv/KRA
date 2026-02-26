@@ -14,6 +14,7 @@ import { Product } from './product/entities/product.entity';
 import { CartController } from './cart/cart.controller';
 import { CartService } from './cart/cart.service';
 import { CartModule } from './cart/cart.module';
+import { Cart } from './cart/entities/cart.entity';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { CartModule } from './cart/cart.module';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
 
-        entities: [User, Product],
+        entities: [User, Product, Cart],
         synchronize: true, // ❌ disable in production
       }),
     }),
@@ -46,7 +47,7 @@ import { CartModule } from './cart/cart.module';
   ],
 
   // ✅ Only root controller/service here
-  controllers: [AppController, CartController],
-  providers: [AppService, CartService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
