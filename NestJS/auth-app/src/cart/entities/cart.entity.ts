@@ -7,19 +7,18 @@ export class Cart{
     @PrimaryGeneratedColumn()
     id: number;
 
-    // relation with User
-    @ManyToOne(()=> User, (user) => user.id, {
+    // Relation with User — unidirectional (User doesn't need inverse)
+    @ManyToOne(() => User, {
         onDelete: 'CASCADE',
     })
-
-    @JoinColumn({name: 'userId'})
+    @JoinColumn({ name: 'userId' })
     user: User;
 
-    // relation with Product
+    // Relation with Product — unidirectional
     @ManyToOne(() => Product, {
         onDelete: 'CASCADE',
     })
-    @JoinColumn({name: 'productId'})
+    @JoinColumn({ name: 'productId' })
     product: Product;
 
     // quantity of product

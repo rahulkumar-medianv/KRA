@@ -1,0 +1,265 @@
+postgres-# INSERT INTO accounts VALUES
+postgres-# (1, 'Amit', 5000),
+postgres-# (2, 'Sara', 3000);
+ERROR:  syntax error at or near "clear"
+LINE 1: clear
+        ^
+postgres=# INSERT INTO accounts(id, name, balance)
+postgres-# VALUES
+postgres-# (1, 'Amit', 5000), (2, 'sara', 3000);
+INSERT 0 2
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |    5000
+  2 | sara |    3000
+(2 rows)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE 1
+postgres=*# select * from accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    3000
+  1 | Amit |    4000
+(2 rows)
+
+
+postgres=*# UPDATE accounts SET balance = balance + 1000 WHERE id = 2;
+UPDATE 1
+postgres=*# COMMIT;
+COMMIT
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |    4000
+  2 | sara |    4000
+(2 rows)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE 1
+postgres=*# UPDATE accounts SET balance = balance + 1000 WHERE id = 99;
+UPDATE 0
+postgres=*# ROLLBACK;
+ROLLBACK
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |    4000
+  2 | sara |    4000
+(2 rows)
+
+
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |    4000
+  2 | sara |    4000
+(2 rows)
+
+
+postgres=# UPDATE accounts set balance = balance - 1000 where id = 1;
+UPDATE 1
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    4000
+  1 | Amit |    3000
+(2 rows)
+
+
+postgres=# ROLLBACK;
+WARNING:  there is no transaction in progress
+ROLLBACK
+postgres=# COMMIT;
+WARNING:  there is no transaction in progress
+COMMIT
+postgres=# BEIGN;
+ERROR:  syntax error at or near "BEIGN"
+LINE 1: BEIGN;
+        ^
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance - 1000 where id = 1;
+UPDATE 1
+postgres=*# UPDATE accounts SET balance = balance + 1000 where id = 2;
+UPDATE 1
+postgres=*# COMMI;
+ERROR:  syntax error at or near "COMMI"
+LINE 1: COMMI;
+        ^
+postgres=!# COMMIT;
+ROLLBACK
+postgres=# ROLLBACK;
+WARNING:  there is no transaction in progress
+ROLLBACK
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    4000
+  1 | Amit |    3000
+(2 rows)
+
+
+postgres=# BEIGN;
+ERROR:  syntax error at or near "BEIGN"
+LINE 1: BEIGN;
+        ^
+postgres=# EGIN;
+ERROR:  syntax error at or near "EGIN"
+LINE 1: EGIN;
+        ^
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance + 5000;
+UPDATE 2
+postgres=*# COMMIT;
+COMMIT
+postgres=# UPDATE accounts SET balance = balance - 5000;
+UPDATE 2
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    4000
+  1 | Amit |    3000
+(2 rows)
+
+
+postgres=# ROLLBACK;
+WARNING:  there is no transaction in progress
+ROLLBACK
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE account SET balance = balance + 6000;
+ERROR:  relation "account" does not exist
+LINE 1: UPDATE account SET balance = balance + 6000;
+               ^
+postgres=!# UPDATE accounts SET baance = balance + 6000;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+postgres=!# ROLLBACK;
+ROLLBACK
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance + 6000 WHERE id = 1;
+UPDATE 1
+postgres=*# SELECt * FROM accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    4000
+  1 | Amit |    9000
+(2 rows)
+
+
+postgres=*# UPDATE accounts SET balance = balance - 6000 WHERE id = 2;
+UPDATE 1
+postgres=*# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |    9000
+  2 | sara |   -2000
+(2 rows)
+
+
+postgres=*# ROLLBACK;
+ROLLBACK
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    4000
+  1 | Amit |    3000
+(2 rows)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance - 3000 WHERE id = 1 AND balance >= 3000;
+UPDATE 1
+postgres=*# UPDATE accounts SET balance = balance + 3000 WHERE id = 2;
+UPDATE 1
+postgres=*# COMMIT;
+COMMIT
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |       0
+  2 | sara |    7000
+(2 rows)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance - 2000 WHERE id = 1 AND balance >= 2000;
+UPDATE 0
+postgres=*# UPDATE accounts SET balance = balance + 2000 WHERE id = 2;
+UPDATE 1
+postgres=*# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |       0
+  2 | sara |    9000
+(2 rows)
+
+
+postgres=*# ROLLBACK;
+ROLLBACK
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |       0
+  2 | sara |    7000
+(2 rows)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance - 3000 WHERE id = 2 AND balance >= 3000;
+UPDATE 1
+postgres=*# UPDATE account SET balance = balance + 3000 WHERE id = 1;
+ERROR:  relation "account" does not exist
+LINE 1: UPDATE account SET balance = balance + 3000 WHERE id = 1;
+               ^
+postgres=!# UPDATE accounts SET balance = balance + 3000 WHERE id = 1;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+postgres=!# select * from accounts;
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+postgres=!# COMMIT;
+ROLLBACK
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  1 | Amit |       0
+  2 | sara |    7000
+(2 rows)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# UPDATE accounts SET balance = balance - 3000 WHERE id = 2 AND balance >= 3000;
+UPDATE 1
+postgres=*# UPDATE accounts SET balance = balance + 3000 WHERE id = 1;
+UPDATE 1
+postgres=*# select * from accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    4000
+  1 | Amit |    3000
+(2 rows)
+
+
+postgres=*# COMMIT;
+COMMIT
+postgres=# select * from accounts;
+ id | name | balance
+----+------+---------
+  2 | sara |    4000
+  1 | Amit |    3000
+(2 rows)
+
+
+postgres=#

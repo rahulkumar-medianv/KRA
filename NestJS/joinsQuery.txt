@@ -1,0 +1,200 @@
+postgres-# \dt
+             List of tables
+ Schema |    Name    | Type  |  Owner
+--------+------------+-------+----------
+ public | accounts   | table | postgres
+ public | address    | table | postgres
+ public | demo_types | table | postgres
+ public | orders     | table | postgres
+ public | products   | table | postgres
+ public | users      | table | postgres
+(6 rows)
+
+
+postgres-# select * from orders;
+ERROR:  syntax error at or near "clear"
+LINE 1: clear
+        ^
+postgres=# select * from orders;
+ orderid | userid | productid |         created_at
+---------+--------+-----------+----------------------------
+       8 |      3 |         1 | 2026-02-27 13:06:59.292894
+       9 |      4 |         1 | 2026-02-27 13:30:12.446588
+      10 |      3 |         3 | 2026-02-27 13:30:12.446588
+(3 rows)
+
+
+postgres=# select * from products;
+ id | product_name |  description   | status | price |         created_at
+----+--------------+----------------+--------+-------+----------------------------
+  1 | Laptop       | Gaming laptop  | t      | 75000 | 2026-02-27 11:09:34.475899
+  3 | Vivo         | vivo v7 pro 5g | t      |   200 | 2026-02-27 11:12:31.132878
+(2 rows)
+
+
+postgres=# select * from address;
+ id | user_id |  city   |    state    |      location
+----+---------+---------+-------------+--------------------
+  4 |       3 | GAYA    | BIHAR       | MANPUR
+  5 |       4 | PATNA   | BIHAR       | RAJENDAR NAGAR
+  6 |       3 | KOLKATA | WEST BENGAL | SALT LAKE SECTOR 5
+(3 rows)
+
+
+postgres=# select users.name, users.email, address.city, address.location
+postgres-# from users
+postgres-# inner join address
+postgres-# on address.user_id = users.id;
+  name  |       email        |  city   |      location
+--------+--------------------+---------+--------------------
+ lokesh | lokesh@gmail.com   | GAYA    | MANPUR
+ Rahul  | rahulkmr@gmail.com | PATNA   | RAJENDAR NAGAR
+ lokesh | lokesh@gmail.com   | KOLKATA | SALT LAKE SECTOR 5
+(3 rows)
+
+
+postgres=# select products.name, products.price, address.location, address.city
+postgres-# from orders
+postgres-# inner join products
+postgres-# on products.id = orders.productid
+postgres-# inner join users
+postgres-# on users.id = orders.userid
+postgres-# inner join address
+postgres-# on address.user_id = users.id;
+ERROR:  column products.name does not exist
+LINE 1: select products.name, products.price, address.location, addr...
+               ^
+postgres=# select products.product_name, products.price, address.location, address.city
+postgres-# from orders
+postgres-# inner join products
+postgres-# on products.id = orders.productid
+postgres-# inner join users
+postgres-# on users.id = orders.userid
+postgres-# inner join address
+postgres-# on address.user_id = users.id;
+ product_name | price |      location      |  city
+--------------+-------+--------------------+---------
+ Laptop       | 75000 | SALT LAKE SECTOR 5 | KOLKATA
+ Laptop       | 75000 | MANPUR             | GAYA
+ Laptop       | 75000 | RAJENDAR NAGAR     | PATNA
+ Vivo         |   200 | SALT LAKE SECTOR 5 | KOLKATA
+ Vivo         |   200 | MANPUR             | GAYA
+(5 rows)
+
+
+postgres=# select * from users;
+   id   |    name    |        email         | is_active |         created_at         |      role       | is_verified
+--------+------------+----------------------+-----------+----------------------------+-----------------+-------------
+      3 | lokesh     | lokesh@gmail.com     | t         | 2026-02-27 10:54:49.496794 | CONTENT_MANAGER | f
+      4 | Rahul      | rahulkmr@gmail.com   | t         | 2026-02-27 12:13:40.279443 | USER            | f
+      5 | vishal     | vishal@gmail.com     | t         | 2026-02-27 14:02:28.965855 | USER            | f
+      6 | user1      | user1@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+      7 | user2      | user2@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+      8 | user3      | user3@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+      9 | user4      | user4@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     10 | user5      | user5@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     11 | user6      | user6@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     12 | user7      | user7@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     13 | user8      | user8@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     14 | user9      | user9@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     15 | user10     | user10@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     16 | user11     | user11@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     17 | user12     | user12@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     18 | user13     | user13@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     19 | user14     | user14@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     20 | user15     | user15@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     21 | user16     | user16@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     22 | user17     | user17@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     23 | user18     | user18@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     24 | user19     | user19@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     25 | user20     | user20@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     26 | user21     | user21@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     27 | user22     | user22@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     28 | user23     | user23@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     29 | user24     | user24@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     30 | user25     | user25@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     31 | user26     | user26@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     32 | user27     | user27@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     33 | user28     | user28@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     34 | user29     | user29@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     35 | user30     | user30@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     36 | user31     | user31@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     37 | user32     | user32@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     38 | user33     | user33@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     39 | user34     | user34@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+     40 | user35     | user35@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f
+Cancel request sent
+postgres=# select users.name, users.email, address.city, address.location, products.product_name, products.description, products.price
+postgres-# from orders
+postgres-# inner join users
+postgres-# on users.id = orders.userid
+postgres-# inner join products
+postgres-# on products.id = orders.productid
+postgres-# inner join address
+postgres-# on address.user_id = users.id;
+  name  |       email        |  city   |      location      | product_name |  description   | price
+--------+--------------------+---------+--------------------+--------------+----------------+-------
+ lokesh | lokesh@gmail.com   | KOLKATA | SALT LAKE SECTOR 5 | Laptop       | Gaming laptop  | 75000
+ lokesh | lokesh@gmail.com   | GAYA    | MANPUR             | Laptop       | Gaming laptop  | 75000
+ Rahul  | rahulkmr@gmail.com | PATNA   | RAJENDAR NAGAR     | Laptop       | Gaming laptop  | 75000
+ lokesh | lokesh@gmail.com   | KOLKATA | SALT LAKE SECTOR 5 | Vivo         | vivo v7 pro 5g |   200
+ lokesh | lokesh@gmail.com   | GAYA    | MANPUR             | Vivo         | vivo v7 pro 5g |   200
+(5 rows)
+
+
+postgres=# select users.name, users.email
+postgres-# from users
+postgres-# inner join address
+postgres-# on address.user_id = users.id;
+  name  |       email
+--------+--------------------
+ lokesh | lokesh@gmail.com
+ Rahul  | rahulkmr@gmail.com
+ lokesh | lokesh@gmail.com
+(3 rows)
+
+
+postgres=# select * from users
+postgres-# left join address
+postgres-# on address.user_id = users.id;
+   id   |    name    |        email         | is_active |         created_at         |      role       | is_verified | id | user_id |  city   |    state    |      location
+--------+------------+----------------------+-----------+----------------------------+-----------------+-------------+----+---------+---------+-------------+--------------------
+      3 | lokesh     | lokesh@gmail.com     | t         | 2026-02-27 10:54:49.496794 | CONTENT_MANAGER | f           |  4 |       3 | GAYA    | BIHAR       | MANPUR
+      3 | lokesh     | lokesh@gmail.com     | t         | 2026-02-27 10:54:49.496794 | CONTENT_MANAGER | f           |  6 |       3 | KOLKATA | WEST BENGAL | SALT LAKE SECTOR 5
+      4 | Rahul      | rahulkmr@gmail.com   | t         | 2026-02-27 12:13:40.279443 | USER            | f           |  5 |       4 | PATNA   | BIHAR       | RAJENDAR NAGAR
+      5 | vishal     | vishal@gmail.com     | t         | 2026-02-27 14:02:28.965855 | USER            | f           |    |         |         |             |
+      6 | user1      | user1@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+      7 | user2      | user2@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+      8 | user3      | user3@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+      9 | user4      | user4@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     10 | user5      | user5@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     11 | user6      | user6@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     12 | user7      | user7@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     13 | user8      | user8@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     14 | user9      | user9@gmail.com      | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     15 | user10     | user10@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     16 | user11     | user11@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     17 | user12     | user12@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     18 | user13     | user13@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+     19 | user14     | user14@gmail.com     | t         | 2026-02-27 15:18:49.288789 | USER            | f           |    |         |         |             |
+^CCancel request sent
+postgres=# select * from address
+postgres-# left join users
+postgres-# on users.id = address.user_id;
+ id | user_id |  city   |    state    |      location      | id |  name  |       email        | is_active |         created_at         |      role       | is_verified
+----+---------+---------+-------------+--------------------+----+--------+--------------------+-----------+----------------------------+-----------------+-------------
+  4 |       3 | GAYA    | BIHAR       | MANPUR             |  3 | lokesh | lokesh@gmail.com   | t         | 2026-02-27 10:54:49.496794 | CONTENT_MANAGER | f  5 |       4 | PATNA   | BIHAR       | RAJENDAR NAGAR     |  4 | Rahul  | rahulkmr@gmail.com | t         | 2026-02-27 12:13:40.279443 | USER            | f  6 |       3 | KOLKATA | WEST BENGAL | SALT LAKE SECTOR 5 |  3 | lokesh | lokesh@gmail.com   | t         | 2026-02-27 10:54:49.496794 | CONTENT_MANAGER | f(3 rows)
+
+
+postgres=# select * from products
+postgres-# right join orders
+postgres-# on orders.productid = products.id;
+ id | product_name |  description   | status | price |         created_at         | orderid | userid | productid |         created_at
+----+--------------+----------------+--------+-------+----------------------------+---------+--------+-----------+----------------------------
+  1 | Laptop       | Gaming laptop  | t      | 75000 | 2026-02-27 11:09:34.475899 |       8 |      3 |         1 | 2026-02-27 13:06:59.292894
+  1 | Laptop       | Gaming laptop  | t      | 75000 | 2026-02-27 11:09:34.475899 |       9 |      4 |         1 | 2026-02-27 13:30:12.446588
+  3 | Vivo         | vivo v7 pro 5g | t      |   200 | 2026-02-27 11:12:31.132878 |      10 |      3 |         3 | 2026-02-27 13:30:12.446588
+(3 rows)
+
+
+postgres=#

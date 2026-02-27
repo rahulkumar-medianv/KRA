@@ -10,5 +10,4 @@ export class AddCartDTO {
     @IsNumber()
     @Min(1)
     quantity: number;
-
 }

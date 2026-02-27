@@ -11,8 +11,6 @@ import { ProductModule } from './product/product.module';
 
 import { User } from './users/user.entity';
 import { Product } from './product/entities/product.entity';
-import { CartController } from './cart/cart.controller';
-import { CartService } from './cart/cart.service';
 import { CartModule } from './cart/cart.module';
 import { Cart } from './cart/entities/cart.entity';
 
