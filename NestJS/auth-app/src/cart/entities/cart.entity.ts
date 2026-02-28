@@ -8,7 +8,7 @@ export class Cart{
     id: number;
 
     // Relation with User — unidirectional (User doesn't need inverse)
-    @ManyToOne(() => User, {
+    @ManyToOne((user) => User,{
         onDelete: 'CASCADE',
     })
     @JoinColumn({ name: 'userId' })

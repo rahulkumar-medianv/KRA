@@ -25,4 +25,8 @@ export class User {
   // One user can have many cart items
   @OneToMany(() => Cart, (cart) => cart.user)
   carts: Cart[];
+
+  // @OneToMany(() => Order, (order) => order.user)
+  // orders:Order[]
+
 }

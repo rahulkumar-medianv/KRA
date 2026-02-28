@@ -13,6 +13,9 @@ import { User } from './users/user.entity';
 import { Product } from './product/entities/product.entity';
 import { CartModule } from './cart/cart.module';
 import { Cart } from './cart/entities/cart.entity';
+import { OrdersService } from './orders/orders.service';
+import { OrdersController } from './orders/orders.controller';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -42,10 +45,11 @@ import { Cart } from './cart/entities/cart.entity';
     UsersModule,
     ProductModule,
     CartModule,
+    OrdersModule,
   ],
 
   // ✅ Only root controller/service here
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, OrdersController],
+  providers: [AppService, OrdersService],
 })
 export class AppModule {}
