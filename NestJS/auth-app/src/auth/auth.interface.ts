@@ -2,5 +2,6 @@
 export interface Auth{
     email: string;
     password: string;
-    refreshToken?: string
+    refreshToken?: string;
+    role?: string
 }
