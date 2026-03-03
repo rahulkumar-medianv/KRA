@@ -199,7 +199,7 @@ export class UsersController {}
 */
 
 /*
-Decorators in NestJS -- A function that adda metadata or behavior to a class, method, or parameter.
+Decorators in NestJS -- A function that adds metadata or behavior to a class, method, or parameter.
 - Attach extra power without changing core logic.
 
 class Decorators --- @Controller(), @Injectable(), @Module()

@@ -16,6 +16,10 @@ import { Cart } from './cart/entities/cart.entity';
 import { OrdersService } from './orders/orders.service';
 import { OrdersController } from './orders/orders.controller';
 import { OrdersModule } from './orders/orders.module';
+import { MessageController } from './message/message.controller';
+import { MessageService } from './message/message.service';
+import { MessageModule } from './message/message.module';
+import { Message } from './message/message.entity';
 
 @Module({
   imports: [
@@ -35,7 +39,7 @@ import { OrdersModule } from './orders/orders.module';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
 
-        entities: [User, Product, Cart],
+        entities: [User, Product, Cart, Message],
         synchronize: true, // ❌ disable in production
       }),
     }),
@@ -46,10 +50,11 @@ import { OrdersModule } from './orders/orders.module';
     ProductModule,
     CartModule,
     OrdersModule,
+    MessageModule,
   ],
 
   // ✅ Only root controller/service here
-  controllers: [AppController, OrdersController],
-  providers: [AppService, OrdersService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

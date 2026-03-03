@@ -1,6 +1,6 @@
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
-import ChatWidget from "../../components/ChatWidget";
+// import ChatWidget from "../../components/ChatWidget";
 
 export default function mainLayout({children}: Readonly<{
   children: React.ReactNode;
@@ -10,7 +10,7 @@ export default function mainLayout({children}: Readonly<{
       <Navbar/>
       <main>{children}</main>
       <Footer/>
-      <ChatWidget />
+      {/* <ChatWidget /> */}
       </>
     )
 }

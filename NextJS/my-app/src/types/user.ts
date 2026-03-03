@@ -13,3 +13,12 @@ export interface User{
   email: string;
   password: string;
 }
+
+export interface Message{
+  fname: string;
+  lname: string;
+  email: string;
+  number: string;
+  text: string;
+  isagree: boolean;
+}

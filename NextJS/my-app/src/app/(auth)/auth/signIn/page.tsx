@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/src/redux/authSlice";
@@ -25,11 +25,21 @@ export default function LoginPage() {
     e.preventDefault();
     if(!user.email || !user.password) return alert("Email & password required");
     dispatch(loginUser({email: user.email, password: user.password}) as any)
-
-    if(state.isAuthenticated) router.push("/profile");
   }
 
-  if(state.isAuthenticated) return router.push('/profile')
+  useEffect(() => {
+    if (state.isAuthenticated) {
+
+      if(state.user.role == 'user'){
+router.push('/profile');
+      }else if(state.user.role == 'admin'){
+        router.push('/content-manager')
+      }
+      
+    }
+  }, [state.isAuthenticated, router]);
+
+  if(state.isAuthenticated) return null
 
   return (
    
@@ -107,7 +117,7 @@ export default function LoginPage() {
  <p className=" text-center text-sm/6 text-gray-500 dark:text-gray-400">
             Don't have an account ?{' '}
             <Link
-              href="/auth/auth/signup"
+              href="/auth/signup"
               className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
               Register

@@ -14,8 +14,6 @@ export default function DashboardPage(){
         }
     }, [state.isAuthenticated, router]);
 
-    if (!state.isAuthenticated) return null;
-
     return (
         <div>
             <p>Welcome to dashboard</p>

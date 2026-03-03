@@ -25,7 +25,7 @@ JWT needs configuration:
 secret: 'mysecretkey'
 expiresIn: '1h'
 
-Bur in real apps this comes from: -- env variables, database, config service, async loading
+But in real apps this comes from: -- env variables, database, config service, async loading
 
 so nestJS cannot guess this.
 we create a custom provider that supplies JWT configuration.
@@ -73,5 +73,25 @@ sub: userID,
 role: role
 
 }
+
+*/
+
+/*
+postgreSQL
+-----------
+1. FROM
+2. WHERE
+3. GROUP BY
+4. HAVING
+5. SELECT 
+6 ORDER BY
+7. LIMIT / OFFSET
+
+
+
+- first it select he table (FROM emp)
+- then it filter rows (WHERE city = 'bhopal') - only bhopal rows remain
+- then grouping happens (GROUP BY city) Rows are grouped by city.
+
 
 */

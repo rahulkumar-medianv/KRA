@@ -16,11 +16,10 @@ export default function profilePage(){
         }
     }, [state.isAuthenticated, router]);
 
-    if (!user) return null;
-
     return (
-        <div>
-           <ProfileCard  user={user}/>
-        </div>
+        <>
+            <ProfileCard/>
+           
+        </>
     )
 }

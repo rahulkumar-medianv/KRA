@@ -135,3 +135,79 @@ In simple words: TanStack Query = Smart API data manager
 
 
 */
+
+/*
+HTTp & WebSocket
+---------------------
+
+HTTP - (Normal API)
+client -> request -> server
+server -> Response -> client
+connection closed
+
+WebSocket - (Real-Time)
+server -> Message -> client
+client -> message -> server
+
+No need to request again and again
+
+
+How to implement using NestJS (Backend);
+in NestJS we use: 
+- @nestjs/websockets
+- socket.io
+
+STEP: 1 install
+----------------
+npm install @nestjs/websockets @nestjs/plateform-socket.io socket.io
+
+STEP: 2 Create Gateway
+- chat.gateway.ts
+
+export class ChatGateway{
+@WebSocketServer()
+server: Server;
+
+// client sends message
+@SubscribeMessage('sendMessage')
+handleMessage(@MessageBody() data: any){
+console.loh("Received", Data);
+
+// Broadcast to all clients
+this.server.emit('receivemessage', data)
+}
+}
+
+
+Next.js Frontend (Connect to NestJS)
+npm install socket.io-client
+
+*/
+
+/*
+Webhook
+--------
+- When Server A automatically sends to server B when an event happens.
+
+we don't ask for the data
+it sends automatically.
+
+- A Webhook is a way for one application to automatically send real-time data to another application when a specific event happens.
+
+Webhook - automatic event-based notification send for one server to another server.
+- you give your server URl to another service
+- when event happens -> that serivce automatically sends data to your URL
+
+ */
+
+/*
+
+Caching & Refetch Behavior
+-----------------------------
+
+Avoid unnecessary API calls while keeping data fresh.
+- instead of calling API every time -> we store in memory (cache) and control when to refetch.
+
+
+
+*/

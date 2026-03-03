@@ -39,33 +39,27 @@ export const getprofile = createAsyncThunk('profile',
 
 
 const getAuthStorage = () => {
-    if(typeof window == 'undefined') return null;
-    const data = localStorage.getItem('auth');
+    if(typeof window !== 'undefined') {
+const data = localStorage.getItem('auth');
     return data ? JSON.parse(data) : null;
+    }
+
+    return null;
+    
 }
 
 const clearAuthStorage = () => {
     if(typeof window != 'undefined'){
         localStorage.removeItem("auth");
     }
-    // also clear cookie used by middleware
-    if (typeof document !== 'undefined') {
-        document.cookie = 'auth=; Max-Age=0; path=/';
-    }
+    
 }
 
 const saveAuthStorage = (auth: any) => {
     if(typeof window !== 'undefined'){
         localStorage.setItem("auth", JSON.stringify(auth));
     }
-    // mirror to cookie so middleware can read it on the server
-    if (typeof document !== 'undefined') {
-        try {
-            document.cookie = `auth=${encodeURIComponent(JSON.stringify(auth.user))}; path=/`;
-        } catch (e) {
-            // ignore
-        }
-    }
+   
 }
 
 
