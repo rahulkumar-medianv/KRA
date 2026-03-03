@@ -3,24 +3,23 @@ import { DataSource } from 'typeorm';
 import { CreateMessageDTO } from './dto/createMessage.dto';
 
 @Injectable()
-
 export class MessageService {
-    constructor(private dataSource: DataSource) {}
+    constructor(private dataSource: DataSource){}
 
     // POST - Create message
     async createMessage(messageDTO: CreateMessageDTO ){
         const { fname, lname, number, email, text, isagree } = messageDTO
         const query = `
-        INSERT INTO message (fName, lName, number, email, text, isAgree)
+        INSERT INTO message (fname, lname, number, email, text, isagree)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
         `;
 
-        const values = [fname, lname, number, email, text, isagree] 
+        const values = [fname, lname, number, email, text, isagree]; 
         const result = await this.dataSource.query(query, values);
 
         return result[0]
-
+        
     }
 
     // GET - Get All Messages
