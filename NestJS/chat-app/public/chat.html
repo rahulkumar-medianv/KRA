@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Chat</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .chat-container {
+      width: 500px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: #4a6cf7;
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+    }
+
+    .status {
+      padding: 8px 15px;
+      font-size: 14px;
+      background: #eef2ff;
+      color: #333;
+    }
+
+    .chat-box {
+      height: 350px;
+      overflow-y: auto;
+      padding: 15px;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+
+    .sent {
+      align-self: flex-end;
+      background: #4a6cf7;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+
+    .received {
+      align-self: flex-start;
+      background: #e5e7eb;
+      color: black;
+      border-bottom-left-radius: 5px;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .chat-input button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      border: none;
+      background: #4a6cf7;
+      color: white;
+      cursor: pointer;
+    }
+
+    .setup {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .setup input {
+      padding: 8px;
+    }
+
+    .setup button {
+      padding: 10px;
+      background: #4a6cf7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+  </head>
+
+  <body>
+
+    <div class="chat-container">
+
+      <div class="chat-header">🔐 Private Chat</div>
+
+      <div class="status" id="status">
+        Not connected
+      </div>
+
+      <div class="setup" id="setup">
+        <input type="text" id="fromEmail" placeholder="Your Email" />
+        <input type="text" id="toEmail" placeholder="Receiver Email" />
+        <button onclick="connectChat()">Connect Chat</button>
+      </div>
+
+      <div class="chat-box" id="chatBox"></div>
+
+      <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Type message..."
+          onkeydown="handleEnter(event)" />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+
+    </div>
+
+    <script>
+let socket;
+let fromEmail;
+let toEmail;
+let isConnected = false;
+
+function connectChat() {
+  // Prevent multiple connections
+  if (isConnected) {
+    alert("Already connected to chat");
+    return;
+  }
+
+  fromEmail = document.getElementById("fromEmail").value;
+  toEmail = document.getElementById("toEmail").value;
+
+  if (!fromEmail || !toEmail) {
+    alert("Enter both emails");
+    return;
+  }
+
+  socket = io("http://localhost:3000");
+
+  socket.on("connect", () => {
+    document.getElementById("status").innerText =
+      "🟢 Connected as " + fromEmail;
+
+    socket.emit("joinChat", { fromEmail, toEmail });
+  });
+
+  socket.on("joined", (msg) => {
+    document.getElementById("status").innerText =
+      "🟢 Chat connected successfully";
+    
+    // Mark as connected and disable the setup section
+    isConnected = true;
+    disableSetup();
+  });
+
+  socket.on("errorMessage", (msg) => {
+    document.getElementById("status").innerText = "❌ " + msg;
+  });
+
+  socket.on("receiveMessage", (data) => {
+    appendMessage(data.sender, data.message);
+  });
+}
+
+function disableSetup() {
+  const setupDiv = document.getElementById("setup");
+  const inputs = setupDiv.querySelectorAll("input");
+  const button = setupDiv.querySelector("button");
+  
+  // Disable all inputs and button
+  inputs.forEach(input => input.disabled = true);
+  button.disabled = true;
+  button.style.opacity = "0.5";
+  button.style.cursor = "not-allowed";
+  button.innerText = "✓ Connected";
+}
+
+function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const message = input.value.trim();
+  if (!message) return;
+
+  socket.emit("sendMessage", {
+    fromEmail,
+    toEmail,
+    message
+  });
+
+  // appendMessage(fromEmail, message);
+
+  input.value = "";
+}
+
+function appendMessage(sender, message) {
+  const chatBox = document.getElementById("chatBox");
+  const msgDiv = document.createElement("div");
+
+  msgDiv.classList.add("message");
+
+  if (sender === fromEmail) {
+    msgDiv.classList.add("sent");
+  } else {
+    msgDiv.classList.add("received");
+  }
+
+  msgDiv.innerText = message;
+
+  chatBox.appendChild(msgDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function handleEnter(event) {
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+}
+</script>
+
+  </body>
+</html>

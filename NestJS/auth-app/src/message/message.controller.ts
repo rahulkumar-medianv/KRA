@@ -12,7 +12,7 @@ async createmessage(@Body() body: CreateMessageDTO){
    return this.messageService.createMessage(body);
 }
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
     @Get()
    async getMessage() {
       return this.messageService.getMessages();

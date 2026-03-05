@@ -69,4 +69,6 @@ export class AuthController {
   userOnly(@Request() req) {
     return { message: 'Welcome, User!', user: req.user };
   }
+
+  
 }

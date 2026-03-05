@@ -21,16 +21,30 @@ export default function ContactPage() {
 
   setMessage((prev) => ({
     ...prev,
-    [name]: type === "checkbox" ? checked : value,
+    [name]: type === "checkbox" ? checked : value
    }));
 };
 
- const handleSubmit = (e: any) => {
-  e.preventDefault();
-     sendMessage(message);
-    alert("message send successfull");
 
-    setMessage({
+
+const cleanText = (value: string) =>
+  value.replace(/\s+/g, " ").trim();
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const cleanedMessage = {
+    ...message,
+    fname: cleanText(message.fname),
+    lname: cleanText(message.lname),
+    email: cleanText(message.email),
+    number: cleanText(message.number),
+    text: cleanText(message.text),
+  };
+
+  await sendMessage(cleanedMessage);
+
+      setMessage({
       fname: "",
       lname: "",
       email: "",
@@ -38,8 +52,6 @@ export default function ContactPage() {
       text: "",
       isagree: false
     })
-
-   
 };
   return (
     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 dark:bg-gray-900">

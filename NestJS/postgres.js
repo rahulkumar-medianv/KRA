@@ -43,7 +43,7 @@ SELECT * FROM users;
 UPDATE users SET name = 'Amit WHERE id = 1;
 
 ### Delete Query
-DELETE users WHERE id = 1;
+DELETE FROM users WHERE id = 1;
 
 ### DELETE Table
 DROP TABLE users
