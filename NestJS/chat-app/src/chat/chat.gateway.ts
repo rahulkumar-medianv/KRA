@@ -22,15 +22,21 @@ export class ChatGateway
 
   constructor(private readonly dataSource: DataSource) {}
 
+  // Store active chat room per socket
+  private socketRooms = new Map<string, string>();
+
   handleConnection(socket: Socket) {
     console.log('User connected:', socket.id);
   }
 
   handleDisconnect(socket: Socket) {
     console.log('User disconnected:', socket.id);
+
+    // remove socket from memory map when disconnect
+    this.socketRooms.delete(socket.id);
   }
 
-  // ✅ JOIN CHAT (bidirectional check)
+  // JOIN CHAT (DB validation only once)
   @SubscribeMessage('joinChat')
   async handleJoin(
     @MessageBody()
@@ -58,37 +64,33 @@ export class ChatGateway
 
     const roomId = `room_${result[0].id}`;
 
+    // join socket room
     socket.join(roomId);
+
+    // store room in memory
+    this.socketRooms.set(socket.id, roomId);
 
     socket.emit('joined', 'Chat connected successfully');
 
     console.log(`${data.fromEmail} joined ${roomId}`);
   }
 
-  // ✅ SEND MESSAGE (bidirectional safe)
+  // SEND MESSAGE
   @SubscribeMessage('sendMessage')
   async handleMessage(
     @MessageBody()
-    data: { fromEmail: string; toEmail: string; message: string },
+    data: { fromEmail: string; message: string },
+    @ConnectedSocket() socket: Socket,
   ) {
-    const result = await this.dataSource.query(
-      `
-      SELECT id FROM chat
-      WHERE (
-        (from_email = $1 AND to_email = $2)
-        OR
-        (from_email = $2 AND to_email = $1)
-      )
-      AND status = 'CONNECTED'
-      LIMIT 1
-      `,
-      [data.fromEmail, data.toEmail],
-    );
+    // find which room this socket belongs to
+    const roomId = this.socketRooms.get(socket.id);
 
-    if (!result.length) return;
+    if (!roomId) {
+      socket.emit('errorMessage', 'You are not connected to any chat room');
+      return;
+    }
 
-    const roomId = `room_${result[0].id}`;
-
+    // emit message to the room
     this.server.to(roomId).emit('receiveMessage', {
       sender: data.fromEmail,
       message: data.message,
@@ -96,3 +98,13 @@ export class ChatGateway
     });
   }
 }
+
+/*
+socket.emit(<eventName>, <Data>)
+socket.emit('joined', 'connection done')
+- Here server sends an event ('joined') to that user
+- Frontend can listen for it and show something like:
+- Chat connected successfully
+
+- server.emit (Sends message to all connected clients)
+*/

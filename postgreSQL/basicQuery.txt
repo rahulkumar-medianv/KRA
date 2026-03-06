@@ -1,0 +1,602 @@
+PS C:\Users\rahul> psql -U postgres -p 5433
+Password for user postgres:
+
+psql (18.1)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \c ecommerce
+You are now connected to database "ecommerce" as user "postgres".
+ecommerce=# s\dt
+          List of tables
+ Schema | Name | Type  |  Owner
+--------+------+-------+----------
+ public | emp  | table | postgres
+(1 row)
+
+
+ecommerce-# \dt
+          List of tables
+ Schema | Name | Type  |  Owner
+--------+------+-------+----------
+ public | emp  | table | postgres
+(1 row)
+
+
+ecommerce-# select * from emp;
+ERROR:  syntax error at or near "s"
+LINE 1: s
+        ^
+ecommerce=# select * from emp;
+ id | name  |      email
+----+-------+-----------------
+  1 | rahul | rahul@gmail.com
+  2 | ravi  | ravi@gmail.com
+(2 rows)
+
+
+ecommerce=# ALTER TABLE emp
+ecommerce-# ADD COLUMN salary int not null,
+ecommerce-# ADD COLUMN dept_id int not null;
+ERROR:  column "salary" of relation "emp" contains null values
+ecommerce=# ALTER TABLE emp
+ecommerce-# ADD COLUMN salary int not null;
+ERROR:  column "salary" of relation "emp" contains null values
+ecommerce=# select * from emp;
+ id | name  |      email
+----+-------+-----------------
+  1 | rahul | rahul@gmail.com
+  2 | ravi  | ravi@gmail.com
+(2 rows)
+
+
+ecommerce=# ALTER TABLE emp ADD COLUMN salary int;
+ALTER TABLE
+ecommerce=# ALTER TABLE emp ADD COLUMN dept_id int;
+ALTER TABLE
+ecommerce=# select * from emp;
+ id | name  |      email      | salary | dept_id
+----+-------+-----------------+--------+---------
+  1 | rahul | rahul@gmail.com |        |
+  2 | ravi  | ravi@gmail.com  |        |
+(2 rows)
+
+
+ecommerce=# UPDATE emp SET salary = 7000, dept_id = 1 WHERE id = 1;
+UPDATE 1
+ecommerce=# select * from emp;
+ id | name  |      email      | salary | dept_id
+----+-------+-----------------+--------+---------
+  2 | ravi  | ravi@gmail.com  |        |
+  1 | rahul | rahul@gmail.com |   7000 |       1
+(2 rows)
+
+
+ecommerce=# UPDATE emp SET salary = 17000, dept_id = 2 WHERE id = 2;
+UPDATE 1
+ecommerce=# select * from emp;
+ id | name  |      email      | salary | dept_id
+----+-------+-----------------+--------+---------
+  1 | rahul | rahul@gmail.com |   7000 |       1
+  2 | ravi  | ravi@gmail.com  |  17000 |       2
+(2 rows)
+
+
+ecommerce=# \dt
+          List of tables
+ Schema | Name | Type  |  Owner
+--------+------+-------+----------
+ public | emp  | table | postgres
+(1 row)
+
+
+ecommerce=# CREATE TABLE departments(
+ecommerce(# id seial primary key,
+ecommerce(# department_name varchar(100) not null);
+ERROR:  type "seial" does not exist
+LINE 2: id seial primary key,
+           ^
+ecommerce=# CREATE TABLE departments(
+ecommerce(# id serial primary key,
+ecommerce(# department_name varchar(100) not null);
+CREATE TABLE
+ecommerce=#
+ecommerce=# \dt
+             List of tables
+ Schema |    Name     | Type  |  Owner
+--------+-------------+-------+----------
+ public | departments | table | postgres
+ public | emp         | table | postgres
+(2 rows)
+
+
+ecommerce=# INSERT INTO departments(department_name)
+ecommerce-# VALUES
+ecommerce-# ('IT'), ('HR'), ('DEVELOPER');
+INSERT 0 3
+ecommerce=# select * from emp;
+ id | name  |      email      | salary | dept_id
+----+-------+-----------------+--------+---------
+  1 | rahul | rahul@gmail.com |   7000 |       1
+  2 | ravi  | ravi@gmail.com  |  17000 |       2
+(2 rows)
+
+
+ecommerce=# select * from departments;
+ id | department_name
+----+-----------------
+  1 | IT
+  2 | HR
+  3 | DEVELOPER
+(3 rows)
+
+
+ecommerce=# select * from emp
+ecommerce-# inner join departments
+ecommerce-# on departments.id = emp.dept_id;
+ id | name  |      email      | salary | dept_id | id | department_name
+----+-------+-----------------+--------+---------+----+-----------------
+  1 | rahul | rahul@gmail.com |   7000 |       1 |  1 | IT
+  2 | ravi  | ravi@gmail.com  |  17000 |       2 |  2 | HR
+(2 rows)
+
+
+ecommerce=# select name, email, salary, dept_id, department_name
+ecommerce-# from emp
+ecommerce-# inner join departments
+ecommerce-# on departments.id = emp.dept_id;
+ name  |      email      | salary | dept_id | department_name
+-------+-----------------+--------+---------+-----------------
+ rahul | rahul@gmail.com |   7000 |       1 | IT
+ ravi  | ravi@gmail.com  |  17000 |       2 | HR
+(2 rows)
+
+
+ecommerce=# select * from departments;
+ id | department_name
+----+-----------------
+  1 | IT
+  2 | HR
+  3 | DEVELOPER
+(3 rows)
+
+
+ecommerce=# \dt
+             List of tables
+ Schema |    Name     | Type  |  Owner
+--------+-------------+-------+----------
+ public | departments | table | postgres
+ public | emp         | table | postgres
+(2 rows)
+
+
+ecommerce=# ALTER TABLE emp
+ecommerce-# ADD CONSTRAINT fk_department
+ecommerce-# FOREIGN KEY(dept_id)
+ecommerce-# REFERENCES departments(id);
+ALTER TABLE
+ecommerce=# select * from emp;
+ id | name  |      email      | salary | dept_id
+----+-------+-----------------+--------+---------
+  1 | rahul | rahul@gmail.com |   7000 |       1
+  2 | ravi  | ravi@gmail.com  |  17000 |       2
+(2 rows)
+
+
+ecommerce=# select * from departments;
+ id | department_name
+----+-----------------
+  1 | IT
+  2 | HR
+  3 | DEVELOPER
+(3 rows)
+
+
+ecommerce=# \d
+                 List of relations
+ Schema |        Name        |   Type   |  Owner
+--------+--------------------+----------+----------
+ public | departments        | table    | postgres
+ public | departments_id_seq | sequence | postgres
+ public | emp                | table    | postgres
+ public | emp_id_seq         | sequence | postgres
+(4 rows)
+
+
+ecommerce=# INSERT INTO emp(name, email, salary, dept_id)
+ecommerce-# VALUES
+ecommerce-# ('shikhar', shikhar@gmail.com, 25459, 10);
+ERROR:  column "shikhar" does not exist
+LINE 3: ('shikhar', shikhar@gmail.com, 25459, 10);
+                    ^
+ecommerce=# INSERT INTO emp(name, email, salary, dept_id)
+ecommerce-# VALUES
+ecommerce-# ('shikhar', shikhar@gmail.com', 25459, 10);
+ecommerce'# ;
+ecommerce'# select * from departments;
+ecommerce'# \q
+PS C:\Users\rahul> psql -U postgres -p 5433
+Password for user postgres:
+
+psql (18.1)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \c ecommerce
+You are now connected to database "ecommerce" as user "postgres".
+ecommerce=# select * from departments;
+ id | department_name
+----+-----------------
+  1 | IT
+  2 | HR
+  3 | DEVELOPER
+(3 rows)
+
+
+ecommerce=# INSERT INTO emp
+ecommerce-# (name, email, salary, dept_id)
+ecommerce-# VALUES
+ecommerce-# ('lokesh', 'lokesh@gmail.com', 24549, 10);
+ERROR:  insert or update on table "emp" violates foreign key constraint "fk_department"
+DETAIL:  Key (dept_id)=(10) is not present in table "departments".
+ecommerce=# INSERT INTO emp
+ecommerce-# (name, email, salary, dept_id)
+ecommerce-# VALUES
+ecommerce-# ('lokesh', 'lokesh@gmail.com', 24549, 3);
+INSERT 0 1
+ecommerce=# select * from emp;
+ id |  name  |      email       | salary | dept_id
+----+--------+------------------+--------+---------
+  1 | rahul  | rahul@gmail.com  |   7000 |       1
+  2 | ravi   | ravi@gmail.com   |  17000 |       2
+  4 | lokesh | lokesh@gmail.com |  24549 |       3
+(3 rows)
+
+
+ecommerce=# select * from departments;
+ id | department_name
+----+-----------------
+  1 | IT
+  2 | HR
+  3 | DEVELOPER
+(3 rows)
+
+
+ecommerce=# \dt
+             List of tables
+ Schema |    Name     | Type  |  Owner
+--------+-------------+-------+----------
+ public | departments | table | postgres
+ public | emp         | table | postgres
+(2 rows)
+
+
+ecommerce=# \
+invalid command \
+Try \? for help.
+ecommerce=# d
+ecommerce-# \d
+                 List of relations
+ Schema |        Name        |   Type   |  Owner
+--------+--------------------+----------+----------
+ public | departments        | table    | postgres
+ public | departments_id_seq | sequence | postgres
+ public | emp                | table    | postgres
+ public | emp_id_seq         | sequence | postgres
+(4 rows)
+
+
+ecommerce-# select * from department;
+ERROR:  syntax error at or near "d"
+LINE 1: d
+        ^
+ecommerce=# select * from departments;
+ id | department_name
+----+-----------------
+  1 | IT
+  2 | HR
+  3 | DEVELOPER
+(3 rows)
+
+
+ecommerce=# INSERT INTO departments(department_name)
+ecommerce-# VALUES
+ecommerce-# ('QA');
+INSERT 0 1
+ecommerce=# select * from departments;
+ id | department_name
+----+-----------------
+  1 | IT
+  2 | HR
+  3 | DEVELOPER
+  4 | QA
+(4 rows)
+
+
+ecommerce=# select * from emp
+ecommerce-# left join departments
+ecommerce-# on departments.id = emp.dept_id;
+ id |  name  |      email       | salary | dept_id | id | department_name
+----+--------+------------------+--------+---------+----+-----------------
+  1 | rahul  | rahul@gmail.com  |   7000 |       1 |  1 | IT
+  2 | ravi   | ravi@gmail.com   |  17000 |       2 |  2 | HR
+  4 | lokesh | lokesh@gmail.com |  24549 |       3 |  3 | DEVELOPER
+(3 rows)
+
+
+ecommerce=# select * from emp
+ecommerce-# right join departments
+ecommerce-# on departments.id = emp.dept_id;
+ id |  name  |      email       | salary | dept_id | id | department_name
+----+--------+------------------+--------+---------+----+-----------------
+  1 | rahul  | rahul@gmail.com  |   7000 |       1 |  1 | IT
+  2 | ravi   | ravi@gmail.com   |  17000 |       2 |  2 | HR
+  4 | lokesh | lokesh@gmail.com |  24549 |       3 |  3 | DEVELOPER
+    |        |                  |        |         |  4 | QA
+(4 rows)
+
+
+ecommerce=# select name, email, salary, department_name
+ecommerce-# from departments
+ecommerce-# left join emp
+ecommerce-# on emp.dept_id = departments.id;
+  name  |      email       | salary | department_name
+--------+------------------+--------+-----------------
+ rahul  | rahul@gmail.com  |   7000 | IT
+ ravi   | ravi@gmail.com   |  17000 | HR
+ lokesh | lokesh@gmail.com |  24549 | DEVELOPER
+        |                  |        | QA
+(4 rows)
+
+
+
+ecommerce=# SELECT UPPER(name) from emp;
+  upper
+---------
+ RAHUL
+ RAVI
+ LOKESH
+ PRADEP
+ SHIKHAR
+ VISHAL
+(6 rows)
+
+
+ecommerce=# SELECT *, UPPER(name) from emp;
+ id |  name   |       email       | salary | dept_id |  upper
+----+---------+-------------------+--------+---------+---------
+  1 | rahul   | rahul@gmail.com   |   7000 |       1 | RAHUL
+  2 | ravi    | ravi@gmail.com    |  17000 |       2 | RAVI
+  4 | lokesh  | lokesh@gmail.com  |  24549 |       3 | LOKESH
+  6 | pradep  | pradep@gmail.com  |  28900 |       3 | PRADEP
+  5 | shikhar | shikhar@gmail.com |  24599 |       4 | SHIKHAR
+  7 | vishal  | vishal@gmail.com  |  10000 |       1 | VISHAL
+(6 rows)
+
+
+ecommerce=# SELECT UPPER(name) as full_name from emp;
+ full_name
+-----------
+ RAHUL
+ RAVI
+ LOKESH
+ PRADEP
+ SHIKHAR
+ VISHAL
+(6 rows)
+
+
+ecommerce=# SELECT id, UPPER(name) as full_name, email, salary from emp;
+ id | full_name |       email       | salary
+----+-----------+-------------------+--------
+  1 | RAHUL     | rahul@gmail.com   |   7000
+  2 | RAVI      | ravi@gmail.com    |  17000
+  4 | LOKESH    | lokesh@gmail.com  |  24549
+  6 | PRADEP    | pradep@gmail.com  |  28900
+  5 | SHIKHAR   | shikhar@gmail.com |  24599
+  7 | VISHAL    | vishal@gmail.com  |  10000
+(6 rows)
+
+
+ecommerce=# select id as emp_id, UPPER(name) as full_name, email, salary from emp;
+ emp_id | full_name |       email       | salary
+--------+-----------+-------------------+--------
+      1 | RAHUL     | rahul@gmail.com   |   7000
+      2 | RAVI      | ravi@gmail.com    |  17000
+      4 | LOKESH    | lokesh@gmail.com  |  24549
+      6 | PRADEP    | pradep@gmail.com  |  28900
+      5 | SHIKHAR   | shikhar@gmail.com |  24599
+      7 | VISHAL    | vishal@gmail.com  |  10000
+(6 rows)
+
+
+        ^
+ecommerce=# select * from emp;
+ id |  name   |       email       | salary | dept_id
+----+---------+-------------------+--------+---------
+  1 | rahul   | rahul@gmail.com   |   7000 |       1
+  2 | ravi    | ravi@gmail.com    |  17000 |       2
+  4 | lokesh  | lokesh@gmail.com  |  24549 |       3
+  6 | pradep  | pradep@gmail.com  |  28900 |       3
+  5 | shikhar | shikhar@gmail.com |  24599 |       4
+  7 | vishal  | vishal@gmail.com  |  10000 |       1
+(6 rows)
+
+
+ecommerce=# ALTER TABLE emp
+ecommerce-# ADD COLUMN created_at timestamp default now();
+ALTER TABLE
+ecommerce=# select * from emp;
+ id |  name   |       email       | salary | dept_id |         created_at
+----+---------+-------------------+--------+---------+----------------------------
+  1 | rahul   | rahul@gmail.com   |   7000 |       1 | 2026-03-06 13:51:24.039013
+  2 | ravi    | ravi@gmail.com    |  17000 |       2 | 2026-03-06 13:51:24.039013
+  4 | lokesh  | lokesh@gmail.com  |  24549 |       3 | 2026-03-06 13:51:24.039013
+  6 | pradep  | pradep@gmail.com  |  28900 |       3 | 2026-03-06 13:51:24.039013
+  5 | shikhar | shikhar@gmail.com |  24599 |       4 | 2026-03-06 13:51:24.039013
+  7 | vishal  | vishal@gmail.com  |  10000 |       1 | 2026-03-06 13:51:24.039013
+(6 rows)
+
+
+ecommerce=# UPDATE emp SET salary = salary + 16000 WHERE id = 1;
+UPDATE 1
+ecommerce=# select * from emp;
+ id |  name   |       email       | salary | dept_id |         created_at
+----+---------+-------------------+--------+---------+----------------------------
+  2 | ravi    | ravi@gmail.com    |  17000 |       2 | 2026-03-06 13:51:24.039013
+  4 | lokesh  | lokesh@gmail.com  |  24549 |       3 | 2026-03-06 13:51:24.039013
+  6 | pradep  | pradep@gmail.com  |  28900 |       3 | 2026-03-06 13:51:24.039013
+  5 | shikhar | shikhar@gmail.com |  24599 |       4 | 2026-03-06 13:51:24.039013
+  7 | vishal  | vishal@gmail.com  |  10000 |       1 | 2026-03-06 13:51:24.039013
+  1 | rahul   | rahul@gmail.com   |  23000 |       1 | 2026-03-06 13:51:24.039013
+(6 rows)
+
+
+ecommerce=# \dt
+             List of tables
+ Schema |    Name     | Type  |  Owner
+--------+-------------+-------+----------
+ public | departments | table | postgres
+ public | emp         | table | postgres
+(2 rows)
+
+
+ecommerce=# CREATE TYPE user_role AS ENUM ('ADMIN', 'MANAGER', 'EMPLOYEE');
+CREATE TYPE
+ecommerce=# CREATE TABLE users{
+ecommerce-# }
+ecommerce-# ;
+ERROR:  syntax error at or near "{"
+LINE 1: CREATE TABLE users{
+                          ^
+ecommerce=# CREATE TABLE users(
+ecommerce(# id serial primary key,
+ecommerce(# name text,
+ecommerce(# role user_role DEFAULT 'EMPLOYEE');
+CREATE TABLE
+ecommerce=# select * from users;
+ id | name | role
+----+------+------
+(0 rows)
+
+
+ecommerce=# \d
+                 List of relations
+ Schema |        Name        |   Type   |  Owner
+--------+--------------------+----------+----------
+ public | departments        | table    | postgres
+ public | departments_id_seq | sequence | postgres
+ public | emp                | table    | postgres
+ public | emp_id_seq         | sequence | postgres
+ public | users              | table    | postgres
+ public | users_id_seq       | sequence | postgres
+(6 rows)
+
+
+ecommerce=# INSERT INTO users(name)
+ecommerce-# VALUES
+ecommerce-# ('Rahul');
+INSERT 0 1
+ecommerce=# select * from  users;
+ id | name  |   role
+----+-------+----------
+  1 | Rahul | EMPLOYEE
+(1 row)
+
+
+ecommerce=# INSERT INTO users(name, role)
+ecommerce-# VALUES
+ecommerce-# ('ravi', 'admin');
+ERROR:  invalid input value for enum user_role: "admin"
+LINE 3: ('ravi', 'admin');
+                 ^
+ecommerce=# INSERT INTO users(name, role)
+ecommerce-# VALUES
+ecommerce-# ('ravi', 'ADMIN');
+INSERT 0 1
+ecommerce=# select * from users;
+ id | name  |   role
+----+-------+----------
+  1 | Rahul | EMPLOYEE
+  2 | ravi  | ADMIN
+(2 rows)
+
+
+ecommerce=# ALTER TABLE users
+ecommerce-# ADD COLUMN age int CHECK (age >= 18);
+ALTER TABLE
+ecommerce=# select * from users;
+ id | name  |   role   | age
+----+-------+----------+-----
+  1 | Rahul | EMPLOYEE |
+  2 | ravi  | ADMIN    |
+(2 rows)
+
+
+ecommerce=# UPDATE users SET age = 19 WHERE id = 1;
+UPDATE 1
+ecommerce=# select * from users;
+ id | name  |   role   | age
+----+-------+----------+-----
+  2 | ravi  | ADMIN    |
+  1 | Rahul | EMPLOYEE |  19
+(2 rows)
+
+
+ecommerce=# UPDATE users SET age = 17 WHERE id = 2;
+ERROR:  new row for relation "users" violates check constraint "users_age_check"
+DETAIL:  Failing row contains (2, ravi, ADMIN, 17).
+ecommerce=# UPDATE users SET age = 27 WHERE id = 2;
+UPDATE 1
+ecommerce=# select * from users;
+ id | name  |   role   | age
+----+-------+----------+-----
+  1 | Rahul | EMPLOYEE |  19
+  2 | ravi  | ADMIN    |  27
+(2 rows)
+
+
+ecommerce=# select * from emp;
+ id |  name   |       email       | salary | dept_id |         created_at
+----+---------+-------------------+--------+---------+----------------------------
+  2 | ravi    | ravi@gmail.com    |  17000 |       2 | 2026-03-06 13:51:24.039013
+  4 | lokesh  | lokesh@gmail.com  |  24549 |       3 | 2026-03-06 13:51:24.039013
+  6 | pradep  | pradep@gmail.com  |  28900 |       3 | 2026-03-06 13:51:24.039013
+  5 | shikhar | shikhar@gmail.com |  24599 |       4 | 2026-03-06 13:51:24.039013
+  7 | vishal  | vishal@gmail.com  |  10000 |       1 | 2026-03-06 13:51:24.039013
+  1 | rahul   | rahul@gmail.com   |  23000 |       1 | 2026-03-06 13:51:24.039013
+(6 rows)
+
+
+ecommerce=# BEGIN;
+BEGIN
+ecommerce=*# UPDATE emp SET salary = salary - 7000 WHERE id = 2;
+UPDATE 1
+ecommerce=*# UPDATE emp SET salary = salary + 7000 WHERE id = 7;
+UPDATE 1
+ecommerce=*# COMMIT;
+COMMIT
+ecommerce=# select * from emp;
+ id |  name   |       email       | salary | dept_id |         created_at
+----+---------+-------------------+--------+---------+----------------------------
+  4 | lokesh  | lokesh@gmail.com  |  24549 |       3 | 2026-03-06 13:51:24.039013
+  6 | pradep  | pradep@gmail.com  |  28900 |       3 | 2026-03-06 13:51:24.039013
+  5 | shikhar | shikhar@gmail.com |  24599 |       4 | 2026-03-06 13:51:24.039013
+  1 | rahul   | rahul@gmail.com   |  23000 |       1 | 2026-03-06 13:51:24.039013
+  2 | ravi    | ravi@gmail.com    |  10000 |       2 | 2026-03-06 13:51:24.039013
+  7 | vishal  | vishal@gmail.com  |  17000 |       1 | 2026-03-06 13:51:24.039013
+(6 rows)
+
+
+ecommerce=# ALTER TABLE emp
+ecommerce-# DROP COLUMN email;
+ALTER TABLE
+ecommerce=# select * from emp; // Remove the column from table
+
+ALTER TABLE emp
+ADD COLUMN email VARCHAR(255) UNIQUE
+CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');  // Validate email 

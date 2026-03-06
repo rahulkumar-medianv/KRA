@@ -1,0 +1,194 @@
+## Relational Database Design (PK/  FK)
+- Relational Database stores data in tables and connects those tables using relationships.
+ex: department -> employees
+- One department can have many employees. (ONE TO MANY RELATIONSHIP)
+
+ ##  create employees table
+
+ CREATE TABLE employees(
+    id serial primary key,
+    name varchar(50) not null,
+    email varchar(100) not null,
+    salary int,
+    dept_id int
+);
+
+- insert into employees table
+
+INSERT INTO employees(name, email, salary, dept_id)
+VALUES
+('rahul', 'rahul@gmail.com', 29166, 3);
+
+
+## create departments table
+CREATE TABLE departments(
+    id serial primary key,
+    department_name varchar(50)
+);
+
+- insert into departments table
+INSERT INTO departments(department_name)
+VALUES
+('IT'), ('HR'), ('DEVELOPER');
+
+
+Foreign key
+------------------
+Foreign key prevents invalid data.
+Ex: INSERT INTO employees(name, department_id)
+VALUES('rahul', 10)
+
+Error: insert or update violates Foreign key constraint
+- Because department 10 does not exist.
+
+
+departments
+-------------
+id (PK)
+department_name
+
+employees
+-------------
+id (PK)
+name
+email
+salary
+department_id (FK)
+
+
+departments.id
+       │
+       │
+       ▼
+employees.department_id
+
+
+Add Foreign key
+----------------
+Now we connect employees -> departments
+
+ALTER TABLE employees
+ADD CONSTRAINT fk_department
+FOREIGN KEY (department_id)
+REFERENCES departments(id)
+
+ecommerce=# ALTER TABLE emp
+ecommerce-# ADD CONSTRAINT fk_department
+ecommerce-# FOREIGN KEY(dept_id)
+ecommerce-# REFERENCES departments(id);
+
+
+JOINS
+------
+SELF JOIN:  When a Table joins with itself
+- employees have managers
+- categories have parent categories
+- users refer other users
+- In self join we usually use LEFT JOIN because some rows (like top managers) may not have a referece value. LEFT JOIN ensures all rows from the main table are returned even if there is no matching record.
+
+
+### Aggregate Functions -> Count, sum, avg, min, max
+- GROUP BY - Used to group rows with the same values
+- HAVING - Used to filter grouped results.
+
+-----------------------------------------
+1. UPPER() Function: converts text to uppercase
+SELECT UPPERCASE(column_name) FROM table_name;
+
+2. LOWER() function: Convert text to lowercase.
+SELECT LOWER(column_name) FROM table_name;
+
+3. NOW() function: Returns current date and time;
+
+
+Constraints: NOT NULL, UNIQUE, DEFAULT, CHECK
+-----------------------------------------------
+
+Constraints: constraints are rules applied to table columns to control what data can be inserted.
+
+example: 
+prevent NULL values, duplicate values, enforce valid ranges
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    age INT CHECK (age >= 18)
+);
+
+
+create enum values
+-----------------------
+ecommerce=# CREATE TYPE user_role AS ENUM ('ADMIN', 'MANAGER', 'EMPLOYEE');
+
+add enum in table
+
+ecommerce=# CREATE TABLE users(
+ecommerce(# id serial primary key,
+ecommerce(# name text,
+ecommerce(# role user_role DEFAULT 'EMPLOYEE');
+CREATE TABLE
+
+COALESCE() --> Returns first non-null value.
+
+
+--------------------------------------------------------
+1. LINK (pattern Matching - Case Sensitive)
+Link - is used to search for patterns in text columns. it is case - sensitive in POstgreSQL.
+
+% ---- Matches any number of characters
+_ matches exactly one character.
+
+
+example: '%R'   '%R%'    'R%'
+
+
+2. IN -- (multiple value filtering)
+-------------------------------------------
+IN -- used when you want to match multiple possible values instead of writing many OR conditions.
+
+SELECT * FROM employees WHERE dept_id IN (2, 5, 8);
+
+
+3. BETWEEN (Range Filtering)
+------------------------------
+ BETWEEN is Used to filter values within a range.
+ - it includes both start and end values.
+
+
+ const page = 1;
+ const limit = 10;
+ const offset = (page - 1) * limit;
+
+
+ ----------------------------------------
+ CASE WHEN -- (SQL if-Else Logic)
+ CASE WHEN works like if-else statements in programming.
+
+ CASE -- Start conditions Logic
+ WHEN -- conditions
+ THEN -- Result if condition true
+ ELSE -- default results
+ END -- End logic
+
+SELECT name, salary,
+CASE
+    WHEN salary >= 60000 THEN 'High Salary'
+    WHEN salary >= 40000 THEN 'Medium Salary'
+    ELSE 'Low Salary'
+END AS salary_category
+FROM employees;
+
+-------------------------------------------------
+NULL Handling: null means missing or unknown value.
+COALESCE -> Returns the first non-null value.
+NULLIF -> Returns NULL of two values are equal.
+IS NULL -> Used to find rows with NULL values.
+IS NOT NULL -> Find rows where values exist.
+---------------------------------------------
+
+Foreign Key With ON DELETE
+- you can control what happens when the parent row is deleted.
+
+CASCADE: if department is deleted -> employees also deleted.
+
+FOREIGN KEY (dept_id)
+REFERENCES departments(id)
+ON DELETE CASCADE

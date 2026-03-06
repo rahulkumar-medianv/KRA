@@ -17,7 +17,7 @@ export class SendOtp{
     @Column({name: 'is_verify', default: false})
     isVerify: boolean;
 
-    @CreateDateColumn({name: 'created_at', default: Date.now().toString()})
+    @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
 
 }
