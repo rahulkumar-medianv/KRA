@@ -7,7 +7,7 @@ export interface Orders{
     totalPrice: number;
     paymentMode: PaymentMode;
     address: Address;
-    status: OrderStatus
+    status?: OrderStatus
 
 }
 

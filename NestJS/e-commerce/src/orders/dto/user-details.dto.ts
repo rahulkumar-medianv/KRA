@@ -6,6 +6,7 @@ export class UserDetailsDTO{
     userName: string;
 
     @IsEmail()
+    @IsNotEmpty()
     userEmail: string;
 
     @IsString()

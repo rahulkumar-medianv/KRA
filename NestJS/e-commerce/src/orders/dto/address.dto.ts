@@ -13,8 +13,10 @@ export class AddressDTO{
     country: string;
 
     @IsNumber()
+    @IsNotEmpty()
     pincode: number;
 
     @IsString()
+    @IsNotEmpty()
     location: string;
 }

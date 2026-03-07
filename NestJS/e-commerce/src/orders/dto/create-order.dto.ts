@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, ValidateNested } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, ValidateNested } from "class-validator";
 import { ProductDetailsDTO } from "./product-details.dto";
 import { UserDetailsDTO } from "./user-details.dto";
 import { Type } from "class-transformer";
@@ -13,12 +13,14 @@ export class CreateOrderDTO{
 
     @ValidateNested()
     @Type(() => ProductDetailsDTO)
-    ProductDetails: ProductDetailsDTO
+    productDetails: ProductDetailsDTO
 
     @IsNumber()
+    @IsNotEmpty()
     totalPrice: number;
 
     @IsEnum(PaymentMode)
+    @IsNotEmpty()
     paymentMode: PaymentMode;
 
     @ValidateNested()

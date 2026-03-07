@@ -6,10 +6,12 @@ export class ProductDetailsDTO{
     productId: string;
 
     @IsNumber()
+    @IsNotEmpty()
     @Min(1)
     quantity: number;
 
     @IsNumber()
+    @IsNotEmpty()
     @Min(1)
     totalPrice: number;
 }

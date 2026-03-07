@@ -59,8 +59,6 @@ export class ProductsController {
         @Param('id') id: string
     ){
         return this.productService.removeProduct(id);
-    }
-
-    
+    }  
 
 }

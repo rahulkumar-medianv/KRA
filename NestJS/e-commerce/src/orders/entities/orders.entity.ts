@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "t
 import { OrderStatus, PaymentMode, type ProductDetails, type UserDetails } from "../orders.interface";
 import type { Address } from "src/auth/auth.interface";
 import { ProductEntity } from "src/products/entities/product.entity";
+import { IsOptional } from "class-validator";
 
 @Entity('orders')
 export class OrdersEntity{
@@ -34,6 +35,7 @@ export class OrdersEntity{
         enum: OrderStatus,
         default: OrderStatus.PENDING
     })
+    @IsOptional()
     status: OrderStatus;
 
 
